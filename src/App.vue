@@ -1,7 +1,14 @@
 <template>
   <div id="app">
-    <h1>{{ deck }}</h1>
-    <div></div>
+    <div class="container">
+      <button>Restart</button>
+      <button>Hit Me</button>
+      <button>Stay</button>
+    </div>
+    <div>{{ addedDeck.length }}</div>
+    <div v-for="(player, index) in players" :key="index" >
+      {{player.Name}}
+    </div>
   </div>
 </template>
 
@@ -14,7 +21,11 @@ export default {
   data: function() {
     return {
       deck: new Deck(),
-      player: new Player()
+      player: new Player(),
+      addedDeck: null,
+      cardHand: null,
+      players: [],
+      currentPlayer: ''
     }
   },
   mounted: function() {
@@ -24,11 +35,61 @@ export default {
   },
   methods: {
     initDeck: function() {
-      this.deck.get()
+      this.addedDeck = this.deck.get()
       this.deck.shuffle()
     },
     initPlayer: function(i) {
-      this.player.add(i)
+      this.players = this.player.add(i)
+    },
+    dealHands: function() {
+      for(let i = 0; i < 2; i++){
+        for( var j = 0; j < players.length; j++){
+          this.cardHand = this.addedDeck.pop()
+          players[j].Hand.push(cardHand)
+          renderCard(cardHand,j)
+          updatePoints()
+        }
+      }
+      updateDeck()
+    },
+    renderCard: function(card,player) {
+      console.log('render card')
+    },
+    getPoints: function(player) {
+      let points = 0
+      for(var i = 0; i < players[player].Hand.length; i++) {
+          points += players[player].Hand[i].Weight;
+      }
+      players[player].Points = points;
+      return points;
+    },
+    updatePoints: function() {
+      players.forEach(function(e,i,a){
+        getPoints(i)
+      })
+    },
+    updateDeck: function() {
+      console.log(deck.length)
+    },
+    hitMe: function() {
+      var card = deck.pop();
+      players[currentPlayer].Hand.push(card);
+      renderCard(card, currentPlayer);
+      updatePoints();
+      updateDeck();
+      check();
+    },
+    stay: function() {
+      // move on to next player, if any
+      if (currentPlayer != players.length-1) {
+        document.getElementById('player_' + currentPlayer).classList.remove('active');
+        currentPlayer += 1;
+        document.getElementById('player_' + currentPlayer).classList.add('active');
+      }
+
+      else {
+        end();
+      }
     }
   }
 }
