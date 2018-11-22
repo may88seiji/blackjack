@@ -7,11 +7,13 @@
       <button>Stay</button>
     </div>
     <div>{{ addedDeck.length }}</div>
-    <div v-for="(player, index) in players" :key="index" >
-      <div>{{player.Name}}</div>
-      <div v-for="(Hand, index) in player.Hands" :key='index'>
-        <div>{{Hand.Suit}}</div>
-        <div>{{Hand.Value}}</div>
+    <div class="flex">
+      <div v-for="(player, index) in players" :key="index" >
+        <div>{{player.Name}}</div>
+        <div v-for="(Hand, index) in player.Hands" :key='index'>
+          <div>{{Hand.Suit}}</div>
+          <div>{{Hand.Value}}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -104,7 +106,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #000;
   margin-top: 60px;
 }
 
@@ -112,17 +114,10 @@ h1, h2 {
   font-weight: normal;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
+.flex {
+  display: flex;
+  justify-content: space-between;
+  width: 500px;
+  margin: 0 auto;
 }
 </style>
