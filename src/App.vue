@@ -1,25 +1,34 @@
 <template>
   <div id="app">
     <h1>{{ deck }}</h1>
+    <div></div>
   </div>
 </template>
 
 <script>
 import Deck from './deck'
+import Player from './player'
 
 export default {
   name: 'app',
   data: function() {
     return {
-      deck: new Deck()
+      deck: new Deck(),
+      player: new Player()
     }
   },
   mounted: function() {
-    this.initDeck()
+    this.initDeck(),
+    this.initPlayer(0),
+    this.initPlayer(1)
   },
   methods: {
     initDeck: function() {
       this.deck.get()
+      this.deck.shuffle()
+    },
+    initPlayer: function(i) {
+      this.player.add(i)
     }
   }
 }
