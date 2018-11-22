@@ -6,7 +6,7 @@ export default class Player {
   }
   add(id){
     let hand = []
-    let player = { Name: 'Player_'+ id, ID: id, Points: 0, Hand: hand}
+    let player = { Name: 'Player_'+ id, ID: id, Points: 0, Hands: hand}
     players.push(player)
     return players
   }

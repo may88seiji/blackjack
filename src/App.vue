@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <h1>Vue BlackJack</h1>
     <div class="container">
       <button>Restart</button>
       <button>Hit Me</button>
@@ -7,7 +8,11 @@
     </div>
     <div>{{ addedDeck.length }}</div>
     <div v-for="(player, index) in players" :key="index" >
-      {{player.Name}}
+      <div>{{player.Name}}</div>
+      <div v-for="(Hand, index) in player.Hands" :key='index'>
+        <div>{{Hand.Suit}}</div>
+        <div>{{Hand.Value}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -31,7 +36,8 @@ export default {
   mounted: function() {
     this.initDeck(),
     this.initPlayer(0),
-    this.initPlayer(1)
+    this.initPlayer(1),
+    this.dealHands()
   },
   methods: {
     initDeck: function() {
@@ -43,22 +49,19 @@ export default {
     },
     dealHands: function() {
       for(let i = 0; i < 2; i++){
-        for( var j = 0; j < players.length; j++){
+        for( var j = 0; j < this.players.length; j++){
           this.cardHand = this.addedDeck.pop()
-          players[j].Hand.push(cardHand)
-          renderCard(cardHand,j)
-          updatePoints()
+          this.players[j].Hands.push(this.cardHand)
         }
       }
-      updateDeck()
     },
     renderCard: function(card,player) {
       console.log('render card')
     },
     getPoints: function(player) {
       let points = 0
-      for(var i = 0; i < players[player].Hand.length; i++) {
-          points += players[player].Hand[i].Weight;
+      for(var i = 0; i < players[player].Hands.length; i++) {
+          points += players[player].Hands[i].Weight;
       }
       players[player].Points = points;
       return points;
