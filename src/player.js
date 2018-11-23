@@ -2,7 +2,6 @@ let players = []
 
 export default class Player {
   constructor(id) {
-    let hand = []
   }
   add(id){
     let hand = []

@@ -3,14 +3,15 @@
     <h1>Vue BlackJack</h1>
     <div class="container">
       <button>Restart</button>
-      <button>Hit Me</button>
+      <button>Hit</button>
       <button>Stay</button>
     </div>
     <div>{{ addedDeck.length }}</div>
     <div class="flex">
       <div v-for="(player, index) in players" :key="index" >
         <div>{{player.Name}}</div>
-        <div v-for="(Hand, index) in player.Hands" :key='index'>
+        <div>{{player.Points}}</div>
+        <div v-for="(Hand, index) in player.Hands" :key='index' class='card'>
           <div>{{Hand.Suit}}</div>
           <div>{{Hand.Value}}</div>
         </div>
@@ -32,8 +33,12 @@ export default {
       addedDeck: null,
       cardHand: null,
       players: [],
-      currentPlayer: ''
+      currentPlayer: '',
+      points: 0
     }
+  },
+  watch:{
+    players: 'updatePoint'
   },
   mounted: function() {
     this.initDeck(),
@@ -57,24 +62,18 @@ export default {
         }
       }
     },
-    renderCard: function(card,player) {
-      console.log('render card')
-    },
-    getPoints: function(player) {
-      let points = 0
-      for(var i = 0; i < players[player].Hands.length; i++) {
-          points += players[player].Hands[i].Weight;
-      }
-      players[player].Points = points;
-      return points;
-    },
-    updatePoints: function() {
-      players.forEach(function(e,i,a){
-        getPoints(i)
+    updatePoint: function() {
+      this.points = 0
+
+      this.players.forEach(function(e,i,a){
+        let point = 0
+        e.Hands.forEach(function(element,index,array) {
+          point += element.Weight
+          return point
+        })
+        e.Points = point
       })
-    },
-    updateDeck: function() {
-      console.log(deck.length)
+      console.log(this.players[0].Points)
     },
     hitMe: function() {
       var card = deck.pop();
@@ -120,4 +119,11 @@ h1, h2 {
   width: 500px;
   margin: 0 auto;
 }
+
+.card {
+  border: 1px solid;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
 </style>
