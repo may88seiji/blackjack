@@ -2,13 +2,13 @@
   <div id="app">
     <h1>Vue BlackJack</h1>
     <div>{{ status }}</div>
-    <div class="container">
-      <button>Restart</button>
-      <button @click="hit">Hit</button>
-      <button @click="stay">Stay</button>
+    <div class="container" v-bind:class="{ isFinish: isFinish }">
+      <button @click="restart">Restart</button>
+      <button @click="hit" class='button_hit'>Hit</button>
+      <button @click.once="stay" class='button_stay'>Stay</button>
     </div>
     <div>Deck</div>
-    <div class="deck">{{ addedDeck.length }}</div>
+    <div class="deck">{{ deckLength }}</div>
     <div class="flex players" v-bind:class="{ isJudge: isJudge }">
       <div v-for="(player, index) in players" :key="index" :class="['player_' + index]">
         <div>{{player.Name}}</div>
@@ -35,6 +35,7 @@ export default {
       deck: new Deck(),
       player: new Player(),
       addedDeck: null,
+      deckLength: 0,
       cardHand: null,
       players: [],
       currentPlayer: 0,
@@ -42,12 +43,14 @@ export default {
       counter: 0,
       newCard: null,
       status: 'Now Player_0',
-      isJudge: false
+      isJudge: false,
+      isFinish: false
     }
   },
   watch:{
     players: 'updatePoint',
-    newCard: ['updatePoint' , 'check']
+    newCard: ['updatePoint' , 'check'],
+    deckLength: 'updateDeckLength'
   },
   mounted: function() {
     this.initDeck(),
@@ -70,10 +73,13 @@ export default {
           this.players[j].Hands.push(this.cardHand)
         }
       }
+      this.updateDeckLength()
+    },
+    updateDeckLength: function() {
+      this.deckLength = this.addedDeck.length
     },
     updatePoint: function() {
       this.points = 0
-
       this.players.forEach(function(e,i,a){
         let point = 0
         e.Hands.forEach(function(element,index,array) {
@@ -87,10 +93,12 @@ export default {
       this.newCard = 0
       this.newCard = this.addedDeck.pop()
       this.players[this.currentPlayer].Hands.push(this.newCard)
+      this.updateDeckLength()
     },
     check: function(event) {
       if(this.players[this.currentPlayer].Points > 21) {
         this.status = `Player_${this.players[this.currentPlayer].ID} Lose`
+        this.judge()
       }
     },
     stay: function() {
@@ -111,13 +119,17 @@ export default {
     },
     judge: function() {
       this.isJudge = true
+      this.isFinish = true
       if(this.players[0].Points == this.players[1].Points){
         this.status = 'Even'
-      }else if(this.players[0].Points > this.players[1].Points){
+      }else if(this.players[0].Points <= 21 && this.players[0].Points > this.players[1].Points){
         this.status = 'You Win'
-      }else{
+      }else if(this.players[1].Points <= 21 && this.players[1].Points > this.players[0].Points){
         this.status = 'You Lose'
       }
+    },
+    restart: function() {
+      window.location.reload()
     }
   }
 }
@@ -178,6 +190,14 @@ h1, h2 {
     &:not(:first-child) {
       background-color: inherit;
     }
+  }
+}
+
+.isFinish {
+  .button_hit,
+  .button_stay {
+    pointer-events: none;
+    opacity: .7;
   }
 }
 
